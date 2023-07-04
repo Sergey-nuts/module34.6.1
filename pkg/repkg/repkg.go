@@ -9,6 +9,8 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+
+	"module34.6.1/pkg/calc"
 )
 
 var (
@@ -32,18 +34,13 @@ func CalcScan(in *os.File, out *os.File) {
 
 	outBuf := bufio.NewWriter(out) // буфер для записи в файл
 	for _, s := range calcRegex {
-		var res int
+		var res float64
+		c := calc.New()
 		a, _ := strconv.Atoi(s[1])
 		b, _ := strconv.Atoi(s[3])
-		switch s[2] {
-		case "+":
-			res = a + b
-		case "-":
-			res = a - b
-		case "*":
-			res = a * b
-		case "/":
-			res = a / b
+		res, err := c.Calculate(float64(a), float64(b), s[2])
+		if err != nil {
+			continue
 		}
 		fmt.Fprintf(outBuf, "%v%v\n", s[0], res)
 	}
@@ -68,18 +65,13 @@ func CalcReadLine(in *os.File, out *os.File) {
 		// fmt.Println("regex:", calcRegex)
 
 		for _, s := range calcRegex {
-			var res int
+			var res float64
+			c := calc.New()
 			a, _ := strconv.Atoi(s[1])
 			b, _ := strconv.Atoi(s[3])
-			switch s[2] {
-			case "+":
-				res = a + b
-			case "-":
-				res = a - b
-			case "*":
-				res = a * b
-			case "/":
-				res = a / b
+			res, err := c.Calculate(float64(a), float64(b), s[2])
+			if err != nil {
+				continue
 			}
 			// fmt.Println("res:", res)
 			fmt.Fprintf(writer, "%v%v\n", s[0], res)
